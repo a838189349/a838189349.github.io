@@ -50,14 +50,14 @@ Opera|Carakan
 - Compiler（编译器） 首先会读取全部的代码，生成优化后的代码后才会执行。
 
 让我们来看下面的例子
-(```)
+```javascript
 function add(a, b) {
     return a + b;
 }
 for (let i = 0; i < 100; i++) {
     add(1, 1);
 }
-(```)
+```
 
 上面的例子调用了100次 add 函数， 传入两个参数，每次都返回他们的和。
 
