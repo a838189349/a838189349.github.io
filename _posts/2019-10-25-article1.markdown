@@ -1,0 +1,95 @@
+---
+layout: post
+title: "JavaScript引擎"
+subtitle: "JavaScript引擎是什么？它是怎么工作的？"
+date: 2019-10-25 13:01:09
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catalog: true
+tags:
+    - JavaScript
+---
+
+JavaScript是一门高级语言，然而计算机能识别的只有 1 和 0 ，那么我们编写的代码是怎么被计算机所理解的呢？
+> 简单地说，JavaScript引擎就是能够"读懂"JavaScript代码，并准确地给出代码运行结果的一段程序。比方说，
+当你写了 var a = 1 + 1; 这样一段代码，JavaScript引擎做的事情就是看懂（解析）这段代码，并且将a的值变为2。
+
+## 常见的JavaScript引擎
+
+浏览器|采用引擎
+---|:--::
+FireFox|TraceMonkey
+Chrome|V8（C++）
+Mozilla|SpiderMonkey（C）
+WebKit,Safari|SquirrelFish Extreme
+Opera|Carakan
+
+**其中最受欢迎的当属Google公司的V8，NodeJs与Chrome都采用了这个内核，它是由C++编写的。**
+
+# 引擎是怎么工作的呢？
+
+首先让我们来看一个流程图。
+![流程图](https://www.z4a.net/images/2019/10/26/article1_1_img.jpg)
+
+上面就是JavaScript引擎工作的流程图。
+它经过了以下的步骤：
+- Parser 解析器
+- AST 抽象语法树
+- Interpreter 解释程序生成ByteCode
+- profiler
+- compiler 生成优化后的代码
+
+让我们先来了解一下 Interpreter 和 Compiler的区别
+
+# Interpreter 与 Compiler
+通常，将代码由高级语言转换为计算机可读语言的方法大部分是大部分编程语言都适用的，如Python，Java等。
+
+>“如果你不知道compiler是怎么工作的，那么你就不会清楚计算机是怎么工作的。如果你不是100%确定地知道‘你知道compiler是怎么工作的’，那么你肯定不知道compiler是怎么工作的。” — Steve Yegge
+
+- Interpreter（解释器） 逐行读取代码并生成ByteCode立即执行。
+- Compiler（编译器） 首先会读取全部的代码，生成优化后的代码后才会执行。
+
+让我们来看下面的例子
+(```)
+function add(a, b) {
+    return a + b;
+}
+for (let i = 0; i < 100; i++) {
+    add(1, 1);
+}
+(```)
+
+上面的例子调用了100次 add 函数， 传入两个参数，每次都返回他们的和。
+
+**Interpreter**接收到上面的代码后，他开始每一行的读取并执行代码，直到循环结束，也就是说，他的工作只是单纯的向
+计算机不断地解释需要执行的代码。
+当**Compiler**接收到这段代码，它会完整地读取整个程序，对我们要执行的代码进行分析，生成电脑可以读懂的机器语言同时优化整个代码。
+
+![Compiler](https://user-gold-cdn.xitu.io/2019/9/20/16d4e4ca8a713ec4?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+
+它们的运行顺序非常值得一提：
+1. 我们的代码在经过Parser这个解析器时，它可以区分我们的代码是一个保留字段，亦或是函数还是一个变量。
+
+2. 然后，AST(抽象语法数)基于Parser的分类构造树状结构。可以使用[AST Explorer](https://astexplorer.net/)查看该树的解构。
+
+3. AST提供给Interpreter生成ByteCode，此时ByteCode虽然不是最底层的代码，但可以立马被执行，省去了用户等待的过程。
+
+4. 在此同时，profiler查找可以被优化的代码（多次调用的函数或循环），并且传递给Compiler进行优化，
+一旦生成了优化代码，优化后的代码将完全替代正在执行的ByteCode过程。 此前执行的结果依然不会变，这里优化的
+只是生成优化代码后的被执行时效率。
+
+> Interpreter的这个特性给用户带来了更好的用户体验，不必等待程序完全编译后才给用户交互。
+
+由此我们可以得到
+# 两个编译器的区别
+Interpreter逐行读取代码，并立即执行。
+
+Compiler 运行之前会读取全部代码，转换完成后，替换掉正在执行的 由 Interpreter 转换的未优化代码。
+
+
+# 结语
+
+JavaScript 引擎的整体工作原理就是这样。相信您无需学习 JavaScript 也可以理解。 当然，您甚至可以在不知道 JavaScript 如何工作的情况下编写代码。 但是，如果我们了解一些幕后的知识，或许能让我们编写出更好的代码。
+
+内容参考：[JavaScript: Under the Hood](https://medium.com/m/global-identity?redirectUrl=https%3A%2F%2Fblog.bitsrc.io%2Fjavascript-under-the-hood-632ccae06b27)
