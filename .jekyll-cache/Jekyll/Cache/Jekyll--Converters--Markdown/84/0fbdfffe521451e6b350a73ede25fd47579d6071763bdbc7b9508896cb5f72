@@ -1,0 +1,150 @@
+I"B<p><strong>JavaScript运算符分为许多种，以下就是我们的</strong></p>
+
+<h2 id="javascript运算符种类">JavaScript运算符种类</h2>
+
+<blockquote>
+  <p>算数运算符：+加，-减，*乘，/除，%取余，-（一元取反，也可以说是负），++自加，–自减。</p>
+</blockquote>
+
+<blockquote>
+  <p>等同全同运算符：==、===、!==、!===</p>
+</blockquote>
+
+<blockquote>
+  <p>比较运算符：&gt;、&lt;、&gt;=、&lt;=</p>
+</blockquote>
+
+<blockquote>
+  <p>字符串运算符：&gt;，&lt;，&lt;=，&gt;=，=，+</p>
+</blockquote>
+
+<blockquote>
+  <p>逻辑运算符：&amp;&amp;、 ||、 !</p>
+</blockquote>
+
+<blockquote>
+  <p>赋值运算符：=、+=、*=、-=、/=</p>
+</blockquote>
+
+<blockquote>
+  <table>
+    <tbody>
+      <tr>
+        <td>位运算符：&amp;（与运算）、</td>
+        <td>（或运算）、^（异或运算）、~（非运算）、»（带符号的右位移）、»&gt;（无符号的(用0补足的)右位移）、« （左位移）</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+
+<p>今天我们要说的是JavaScript中一个比较奇怪的现象，我们直接看下面例子。</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">);</span>     <span class="c1">// 0.30000000000000004</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">);</span>     <span class="c1">// 0.4</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">);</span>     <span class="c1">// 0.5</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mf">0.15</span> <span class="o">+</span> <span class="mf">0.15</span><span class="p">);</span>   <span class="c1">// 0.3</span>
+</code></pre></div></div>
+
+<p>我们发现一个非常奇怪的现象，0.1 + 0.2 != 0.3，而0.15 + 0.15却等于了0.3，这是为什么呢？
+这个问题我非常喜欢拿来当做面试题对前端面试者的考察。</p>
+
+<h2 id="01--02-不等于-03-的原因">0.1 + 0.2 不等于 0.3 的原因</h2>
+
+<p>首先让我们了解一下JavaScript中的Number类型。</p>
+<blockquote>
+  <p>在JavaScript中，整数和浮点数都属于Number数据类型，所有的数字都是以64位浮点数形式储存，也就是双精度浮点数，即便是整数也是如此。</p>
+</blockquote>
+
+<p><img src="https://www.z4a.net/images/2019/10/28/image.png" alt="float" /></p>
+
+<blockquote>
+  <p>十进制小数转换为二进制小数，用2乘10进制小数，可以得到积，将积的整数部分取出，再用2乘余下的小数部分，又得到一个积，
+再讲积的整数部分取出，如此进行，知道积中的小数部分为零，此时0或1为二进制的最后一位。或者达到所要求的精度为止。</p>
+</blockquote>
+
+<p>下面看两个例子：</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mf">0.3</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span> <span class="mi">1001</span> <span class="mi">1001</span><span class="p">...)</span><span class="nx">B</span>
+<span class="mf">0.3</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.6</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.6</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.4</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.8</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.8</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.6</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.6</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.4</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.8</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.8</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.6</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+
+<span class="mf">0.2</span> <span class="o">=</span> <span class="mf">0.00110011</span><span class="p">....</span>
+<span class="mf">0.2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.4</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.8</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.8</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.6</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.6</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.4</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.4</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">0.8</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">0</span>
+<span class="mf">0.8</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.6</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+<span class="mf">0.6</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">=</span> <span class="mf">1.2</span><span class="o">======</span><span class="err">取出整数部分</span><span class="mi">1</span>
+
+ <span class="c1">// 0.1 转化为二进制</span>
+<span class="mf">0.0</span> <span class="mi">0011</span> <span class="mi">0011</span> <span class="mi">0011</span> <span class="mi">0011</span><span class="p">...(</span><span class="mi">0011</span><span class="err">无限循环）</span>
+</code></pre></div></div>
+
+<p>由于尾数只有52位，所以对于0.1和0.2转换后的二进制如下：</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// S是符号位，在第0位， P是指数位，用e表示，是第1位到第11位。尾数是储存小数部分（即有效数字），第12到63位，用f表示。</span>
+<span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span><span class="mf">1.1001100110011001100110011001100110011001100110011010</span> <span class="p">(</span><span class="mi">52</span><span class="err">位</span><span class="p">)</span>
+<span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span><span class="mf">1.1001100110011001100110011001100110011001100110011010</span> <span class="p">(</span><span class="mi">52</span><span class="err">位</span><span class="p">)</span>
+
+<span class="err">像十进制数有</span><span class="mi">4</span><span class="err">舍</span><span class="mi">5</span><span class="err">入的规则一样，二进制也存在类似的规则，简单的说，如果</span> <span class="mf">1.101</span>
+<span class="err">要保留一位小数，可能的值是</span> <span class="mf">1.1</span> <span class="err">和</span> <span class="mf">1.2</span><span class="err">，那么先看</span> <span class="mf">1.101</span> <span class="err">和</span> <span class="mf">1.1</span> <span class="err">或者</span> <span class="mf">1.2</span> <span class="err">哪个值更</span>
+<span class="err">接近，毫无疑问是</span> <span class="mf">1.1</span><span class="err">，于是答案是</span> <span class="mf">1.1</span><span class="err">。那么如果要保留两位小数呢？很显然要么</span>
+<span class="err">是</span> <span class="mf">1.10</span> <span class="err">要么是</span> <span class="mf">1.11</span><span class="err">，而且又一样近，这时就要看这两个数哪个是偶数（末位是偶</span>
+<span class="err">数），保留偶数为答案。综上，如果第</span> <span class="mi">52</span> <span class="nx">bit</span> <span class="err">和</span> <span class="mi">53</span> <span class="nx">bit</span> <span class="err">都是</span> <span class="mi">1</span><span class="err">，那么是要进位的。</span>
+<span class="err">这也导致了误差的产生。</span>
+</code></pre></div></div>
+
+<p><strong>我们看下这两个二进制相加</strong></p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">1.1001100110011001100110011001100110011001100110011010</span> <span class="p">(</span><span class="mi">52</span><span class="err">位</span><span class="p">)</span>
+<span class="o">+</span> <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">1.1001100110011001100110011001100110011001100110011010</span> <span class="p">(</span><span class="mi">52</span><span class="err">位</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="err">相加时如果指数不一致，需要对齐，一般情况下是向右移，因为最右边的即使溢出了，损失的精度远远小于左边溢出。</span>
+  <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">0.1100110011001100110011001100110011001100110011001101</span>
+<span class="o">+</span> <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">1.1001100110011001100110011001100110011001100110011010</span>
+<span class="o">---------------------------------------------------------------------------</span>
+  <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">10.0110011001100110011001100110011001100110011001100111</span>
+<span class="o">---------------------------------------------------------------------------</span>
+  <span class="nx">e</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span> <span class="nx">m</span> <span class="o">=</span> <span class="mf">1.0011001100110011001100110011001100110011001100110100</span><span class="p">(</span><span class="mi">52</span><span class="err">位</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="o">=</span> <span class="mf">0.010011001100110011001100110011001100110011001100110100</span>
+<span class="o">=</span> <span class="mf">0.30000000000000004</span><span class="p">(</span><span class="err">十进制</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>我们可以看到，当十进制小数的二进制表示的有限数字超过 52 位时，在 JavaScript 里是不能精确存储的，这时候就存在舍入误差(Round-off error)。</p>
+
+<h1 id="那么我们如何解决呢">那么我们如何解决呢？</h1>
+<ul>
+  <li>开源的库：bigInt</li>
+  <li>Number.toFixed  保留指定长度的小数，会四舍五入，不够准确，但可以解决0.1+0.2的问题。</li>
+  <li>各自乘以10的N次方后，再处于10的N次方。 N &gt; 1。</li>
+  <li>Number.EPSILON
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">numbersequal</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">a</span><span class="o">-</span><span class="nx">b</span><span class="p">)</span><span class="o">&lt;</span><span class="nb">Number</span><span class="p">.</span><span class="nx">EPSILON</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">a</span><span class="o">=</span><span class="mf">0.1</span><span class="o">+</span><span class="mf">0.2</span><span class="p">,</span> <span class="nx">b</span><span class="o">=</span><span class="mf">0.3</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">numbersequal</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">));</span> <span class="c1">//true</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>由浮点数精度衍生出来的还有JAVA的long类型，当超出一定范围后会精度丢失。
+我们通过在请求接口的时候，对数据进行一次处理</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getLong</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">text</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">([^\\]</span><span class="sr">":</span><span class="se">)(\d</span><span class="sr">*</span><span class="se">)(</span><span class="sr">,|}</span><span class="se">)</span><span class="sr">/g</span><span class="p">,</span> <span class="dl">'</span><span class="s1">$1"$2"$3</span><span class="dl">'</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>参考文章及发现的有趣coder：</p>
+
+<p><a href="http://0.30000000000000004.com/">0.30000000000000004.com/</a></p>
+
+<p><a href="https://www.jianshu.com/p/e071e1da8dfd">js 双精度浮点数</a></p>
+:ET

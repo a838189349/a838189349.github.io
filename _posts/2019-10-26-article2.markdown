@@ -15,11 +15,17 @@ tags:
 ## JavaScript运算符种类
 
 > 算数运算符：+加，-减，*乘，/除，%取余，-（一元取反，也可以说是负），++自加，--自减。
+
 > 等同全同运算符：==、===、!==、!===
+
 > 比较运算符：>、<、>=、<=
+
 > 字符串运算符：>，<，<=，>=，=，+
-> 逻辑运算符：&&、 ||、 !
+
+> 逻辑运算符：&&、 \|\|、 !
+
 > 赋值运算符：=、+=、*=、-=、/=
+
 > 位运算符：&（与运算）、|（或运算）、^（异或运算）、~（非运算）、>>（带符号的右位移）、>>>（无符号的(用0补足的)右位移）、<< （左位移）
 
 
@@ -39,7 +45,7 @@ console.log(0.15 + 0.15);   // 0.3
 首先让我们了解一下JavaScript中的Number类型。
 > 在JavaScript中，整数和浮点数都属于Number数据类型，所有的数字都是以64位浮点数形式储存，也就是双精度浮点数，即便是整数也是如此。
 
-![float]('https://upload-images.jianshu.io/upload_images/7707397-3feabe7229b2336c.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp')
+![float](https://www.z4a.net/images/2019/10/28/image.png)
 
 > 十进制小数转换为二进制小数，用2乘10进制小数，可以得到积，将积的整数部分取出，再用2乘余下的小数部分，又得到一个积，
 再讲积的整数部分取出，如此进行，知道积中的小数部分为零，此时0或1为二进制的最后一位。或者达到所要求的精度为止。
@@ -120,8 +126,15 @@ console.log(numbersequal(a,b)); //true
 由浮点数精度衍生出来的还有JAVA的long类型，当超出一定范围后会精度丢失。
 我们通过在请求接口的时候，对数据进行一次处理
 
-// 把getLong方法补上。
+```javascript
+String.prototype.getLong = function() {
+  const text = this.replace(/([^\\]":)(\d*)(,|})/g, '$1"$2"$3');
+  return JSON.parse(text);
+}
+```
 
 参考文章及发现的有趣coder：
+
 [0.30000000000000004.com/](http://0.30000000000000004.com/)
+
 [js 双精度浮点数](https://www.jianshu.com/p/e071e1da8dfd)
