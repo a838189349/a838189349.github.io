@@ -1,0 +1,55 @@
+---
+layout: post
+title: "从0开始搭建一个Taro(TypeScript) + dva项目"
+subtitle: ""
+date: 2019-10-27 21:31:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - Taro
+    - Dva
+---
+
+## 背景
+近期公司准备重构一个小程序项目，是大约一年前使用taro + mobx开发的，因为UI、交互的整体改版，
+经过技术研讨和调研，决定对这个项目进行删除重构。
+
+采用的技术栈有：Taro最新版本(1.3.22) + Typescript + dva， 写法多采用函数式组件以及hooks。
+
+## mobx VS dva
+
+这一次的重构选择了dva这个状态管理库，对比 dva 和 mobx 来看，mobx通过在页面中注入（@inject）model 后，
+@observer 就可以实时监听到最新的值。
+
+而dva在mobx的基础上简化了 **redux** 的使用，并且封装了 redux-sage 和 react-router, 同时还可以包含dva-loading插件获取loading状态等。
+
+## 安装步骤
+
+基本项目框架的创建在taro的官方文档上就有。
+[taro安装及使用](https://nervjs.github.io/taro/docs/GETTING-STARTED.html)
+
+**安装与 react-redux API 几乎一致的包 @tarojs/redux**
+
+```javascript
+install --save redux @tarojs/redux @tarojs/redux-h5 redux-thunk redux-logger
+```
+
+**安装dva**
+
+```javascript
+npm install --save dva-core dva-loading
+```
+
+- dva-core: 封装了redux 和 redux-sage 的一个插件。
+- dva-loading：管理页面的loading状态。
+
+
+## 整理新项目的文件
+
+**src文件夹**
+
+- 添加assets文件夹（存放公共资源、ICON、背景图片等）。
+- 添加components文件夹（通用组件(pictureWall，Modal等)）。
+- 添加utils文件夹（存放配置文件，通用方法，请求封装等）。
+- 添加models（存放dva的model文件）。
