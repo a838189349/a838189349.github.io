@@ -15,7 +15,7 @@ tags:
 近期公司准备重构一个小程序项目，是大约一年前使用taro + mobx开发的，因为UI、交互的整体改版，
 经过技术研讨和调研，决定对这个项目进行删除重构。
 
-采用的技术栈有：Taro最新版本(1.3.22) + Typescript + dva， 写法多采用函数式组件以及hooks。
+采用的技术栈有：Taro(1.3.14) + Typescript + dva， 写法多采用函数式组件以及hooks。
 
 ## mobx VS dva
 
@@ -32,7 +32,7 @@ tags:
 **安装与 react-redux API 几乎一致的包 @tarojs/redux**
 
 ```javascript
-install --save redux @tarojs/redux @tarojs/redux-h5 redux-thunk redux-logger
+npm install --save redux @tarojs/redux @tarojs/redux-h5 redux-thunk redux-logger
 ```
 
 **安装dva**
@@ -51,5 +51,116 @@ npm install --save dva-core dva-loading
 
 - 添加assets文件夹（存放公共资源、ICON、背景图片等）。
 - 添加components文件夹（通用组件(pictureWall，Modal等)）。
-- 添加utils文件夹（存放配置文件，通用方法，请求封装等）。
+- 添加utils文件夹（通用方法，请求封装等）。
 - 添加models（存放dva的model文件）。
+- 添加config文件夹（配置文件）。
+
+
+# 编写常用插件
+
+1.在./src/config下创建index.ts, 添加项目配置信息，例如
+
+```javascript
+// api请求地址地址
+/**
+ * 开发环境（DEV - develop开发测试）: 开发环境是指程序员们专门用于开发的服务器，配置可以比较随意，为了开发调试方便，一般打开全部错误报告。
+ *
+ * 测试环境（UAT - User Acceptance Test用户验收测试）：一般是克隆一份生产环境的配置，一个程序在测试环境工作不正常，一定不要把它发布到生产机上。
+ *
+ * 生产环境 （PROD - production正式环境）：是指正式提供对外服务的环境，需要关闭错误报告，打开错误日志，可以理解为包含所有功能的环境。
+ *
+ */
+export const DEV = 'http://120.24.228.2:7002'
+export const PROD = 'https://node.xx.xx'
+
+const getMainHouse = () => {
+    const NODE_ENV = process.env.NODE_ENV;
+    return {
+        local: DEV, // 本地环境
+        uat: '',  // 预生产环境
+        prod: PROD,  // 正式环境
+    }[NODE_ENV]
+}
+
+// 当前的host
+export const MAINHOST = getMainHouse();
+
+/**
+ * 全局分享信息的默认信息
+ */
+export const SHAREINFO = {
+    'title': '房迹',
+    'path': '/pages/houseList/houseList',
+    'imageUrl': '路径url',
+}
+
+export const API = {
+    // 登录
+    login: '/weapp/login',
+}
+```
+
+
+2.在./src/utils下创建dva.ts,配置dva,内容如下：
+
+```javascript
+import { create } from 'dva-core';
+import { createLogger } from 'redux-logger';
+import createLoading from 'dva-loading';
+
+let app
+let store
+let dispatch
+let registered
+
+function createApp(opt) {
+    // redux日志
+    opt.onAction = [createLogger()];
+    app = create(opt);
+    app.use(createLoading({}));
+
+    if (!registered) opt.models.forEach(model => app.model(model));
+    registered = true;
+    app.start();
+
+    store = app._store;
+    app.getStore = () => store;
+
+    app.use({
+        onError(err) {
+            console.log(err)
+        },
+    })
+
+    dispatch = store.dispatch;
+
+    app.dispatch = dispatch;
+
+    return app;
+
+}
+
+export default {
+    createApp,
+    getDispatch() {
+        return app.dispatch;
+    }
+}
+```
+
+``` 自定义tabbar栏
+
+
+``` 使用@tarojs/async-await
+
+
+``` 封装请求函数
+
+
+``` taroconfig 
+
+
+```编写node命令快速创建page
+
+
+```编写node命令快速创建函数式组件component

@@ -1,0 +1,100 @@
+---
+layout: post
+title: "[1,2,3].map(parseInt)"
+subtitle: ""
+date: 2019-10-30 19:02:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - Javascript
+---
+
+**今天发现了这个有趣的前端面试题，他的输出竟然是[1, NAN, NAN]**
+
+## 为什么是这个结果？
+
+首先让我们来了解一下这几个函数。
+
+## map函数
+
+map方法是定义在Array中的一个高阶函数，我们向这个函数传入我们自定义的回调函数（callback），然后map会对数组中的每一个元素去调用回调函数。
+
+map函数可以传递三个参数， item、index、record
+例子：
+```javascript
+    ['a', 'b', 'c'].map((item, index, record) => {
+        // dowhen index === 0
+        console.log(item);      // a
+        console.log(index);     // 0
+        console.log(record);    // ['a', 'b', 'c']
+    })
+```
+
+## parseInt函数
+
+> parseInt函数可解析一个字符串，并返回一个整数。
+
+我们使用这个方法时，一般都是这样的：
+
+```javascript
+    parseInt('2');   // 2
+```
+
+容易被忽略的是，parseInt实际上接收了两个参数。
+
+> parseInt(string, radix);
+> string: 必需，需要被解析的字符串。
+> radix: 选填，表示要解析的数字的基数，取值范围在2 ~ 36之间。
+如果省略该参数或其值为0，则数字将以10为基础来解析。如果它以"0x"或"0X"开头，将以16为基数。如果该参数小于2或者大于36，则parseInt()将返回NaN。
+
+
+结合上述map方法所传递的参数来看。
+
+```javascript
+
+[1,2,3].map(parseInt);
+
+// 补全代码后是
+
+[1,2,3].map((item, index, record) => { parseInt(item, index, record) });
+
+```
+
+因为parseInt只接收两个参数，所以record项会被忽略。
+
+当item为1时，parseInt接收的参数是string: 1 和 radix: 0;
+基数为0的情况下，以10为基础解析。 所以输出是 1
+
+当item为2时，parseInt接收2 和 1;
+基数的取值范围是2 ~ 36，不在范围内，所以输出为NaN。
+
+当item为3时，parseInt接收3 和 2;
+radix在取值范围内，但是2进制里面没有3，所以会返回NaN。
+
+## 解决的办法
+
+```javascript
+
+[1,2,3].map((item) => { parseInt(item) })
+
+```
+
+
+## map VS forEach
+
+forEach 接收的参数与 map一致，为什么上述例子使用forEach，得到的结果却是undefined呢？
+
+首先我们来看一看MDN上对map和forEach的定义：
+
+> forEach(): 针对每一个元素执行提供的函数(executes a provided function once for each array element)。
+
+> map(): 创建一个新的数组，其中每一个元素由调用数组中的每一个元素执行提供的函数得来(creates a new array with the results of calling a provided function on every element in the calling array)。
+
+区别就是forEach()方法不会返回执行结果，返回的是undefined，也就是说，
+forEach会修改原来的数组。而map()方法会得到一个新的数组并返回。
+
+值得一提的是：网络上同样代码的测试结果表明，forEach的执行速度比map慢。
+具体可以去 https://jsperf.com/map-vs-foreach-speed-test 中尝试一下。
+
+以上就是[1,2,3].map(parseInt)为什么输出1, NaN, NaN的解释。
