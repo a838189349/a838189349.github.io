@@ -1,0 +1,64 @@
+---
+layout: post
+title: "取10000个数里面最大的十个数"
+subtitle: ""
+date: 2019-11-05 13:33:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - Javascript
+---
+
+```javascript
+// 给出一个长度1万，里面都是数字的数组，取出里面最大的十个数字。
+
+// 首先取出该数组的前十个，当做底层的基数，在剩下的9990中循环，如果有任何一个数大于其中的一个，那么立即替换掉当前的数
+
+//生成从minNum到maxNum的随机数
+    function randomNum(minNum, maxNum) {
+        switch (arguments.length) {
+            case 1:
+                return parseInt(Math.random() * minNum + 1, 10);
+                break;
+            case 2:
+                return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+
+    _getMax(base, arr) {
+        // arr 是数组的前10个， 作为基础最底部
+        for (let i = 10; i < arr.length; i++) {
+            for (let y = 0; y < base.length; y++) {
+                if (arr[i] > base[y]) {
+                    base[y] = arr[i];
+                    base = base.sort(function(a, b) { return b - a})
+                    break;
+                }
+            }
+        }
+        return base;
+    }
+
+    function compareMax() {
+        let arr = [];
+        let base = [];
+        // 先mock一个1w长度的随机数数组, 同时把数组的前10个当做基数push进去base数组。
+        for(let i = 0; i < 10000; i++) {
+            if (i < 10) {
+                let random = randomNum(0 ,10000);
+                base.push(random);
+                arr.push(random);
+            } else {
+                arr.push(randomNum(0, 10000));
+            }
+        };
+        return _getMax(base, arr);
+    }
+
+
+```
