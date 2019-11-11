@@ -1,0 +1,37 @@
+---
+layout: post
+title: "在箭头函数中使用this"
+subtitle: ""
+date: 2019-11-05 13:33:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - Javascript
+---
+
+> 箭头函数没有自己的this值，所使用的this来自函数作用域链。
+
+```javascript
+
+var x = 10;
+
+var obj = {
+    x: 20,
+    methods: {
+        x: 30,
+        say: function() { console.log(this) },
+        say2: () => { console.log(this) },
+    },
+}
+
+obj.methods.say();    // 30
+obj.methods.say2();     // 10
+
+```
+
+一般函数this指向是在执行的时候绑定，当运行obj.methods.say()时，this指向的是obj这个对象。
+
+
+而调用say2时，使用的是箭头函数，箭头函数相当于匿名函数，本身不绑定this，
+会捕获其所在的上下文的this值，作为自己的this值， 也就是说，他会捕获到在调用自己处自己最近的this: window;
