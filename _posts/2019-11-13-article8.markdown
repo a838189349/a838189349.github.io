@@ -1,0 +1,152 @@
+---
+layout: post
+title: "说说bind、call、apply的区别"
+subtitle: ""
+date: 2019-11-13 13:33:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - Javascript
+---
+
+this关键字，在javascript被广泛应用，即使是已经到了ES2018的年代，它依然是一个非常重要的内容，
+而有时它也会伴随着一些比较奇怪的问题出现。
+
+## 什么是this？
+严格的来说，javascript中除了基本数据类型（Number，String，Boolean，Symbol、null、undefined）外，
+所有的引用类型的值都是一个对象。 所以 this 关键字， 实际上就是一个对象。
+
+我们最常见的this一般都是在函数中， js的函数调用有两种方法， 一种是直接调用， 另一种是通过new关键字调用。
+
+我们打印一下两者的值，看看结果是否一致。
+
+```javascript
+    function Dog(name, color) {
+        this.name = name;
+        this.color = color;
+        console.log(this);
+    }
+
+    Dog('豆豆', '红色');    // window
+    var dog1 = new Dog('豆豆', '红色');    // 输出 dog1 对象
+```
+
+从上面的结果我们可以看出，通过函数直接调用打印出来的this指向的是全局变量window。
+
+通过new的方式调用的函数被当做为构造函数，为了能创建一个实例对象，它的this值指向生成的实例对象。
+
+
+## 如何判断this？
+
+1、普通的function调用，this指向window。
+
+2、一个对象调用，this指向谁呢？我们看例子
+```javascript
+    let obj = {
+        name: '小小良',
+        age: 22,
+        say: function () {
+            console.log(this);
+        }
+    }
+    obj.say();    // obj对象
+
+    let obj2 = {
+        name: '小小良二号',
+        age: '22',
+        say2: () => {
+            console.log(this);
+        }
+    }
+    obj2.say2();    // window
+```
+
+上面的例子我们可以看出，在一个对象调用方法时，如果是用普通的function定义，那么此时的this指向的是当前的对象。 this可以访问到对象内的属性和方法。 而使用箭头函数定义的函数，本身是没有this的，它会在调用区域的上下文捕获距离最近的this，此时的this是window。
+
+3、通过 new 的方式，this永远被绑定在新创建的对象上，任何方式都改变不了 this 的指向。
+```javascript
+function Dog(name, color) {
+    this.name = name;
+    this.color = color;
+    console.log(this);
+}
+let dog1 = new Dog('lencent', '#fff');
+```
+
+
+## 如何改变this的指向呢。
+
+有三种方法： 1、call 方法。  2、apply 方法。   3、bind 方法
+
+```javascript
+function print() {
+    console.log('name:' + this.name);
+    console.log(arguments);
+}
+var obj = {
+    name: 'lencent',
+    age: 22,
+}
+
+// when call
+print.call(obj, 123);
+// name:lencent
+// arguments: [0: 123]
+
+// when apply
+// 注意apply这里是数组形式的传参， 区别于call的单个传参
+// 如果传的不是一个obj， 会提示Uncaught TypeError: CreateListFromArrayLike called on non-object at <anonymo...
+print.apply(obj, [1, 2, 3]);
+// name:lencent
+// arguments: [0: 1, 1: 2, 2: 3]   
+
+// when bind
+// 与前两者几乎的表现几乎没有区别，可传入单参数也可传入数组
+var a = print.bind(obj, 1,2,3);
+var b = print.bind(obj, [1,2,3]);
+a();
+b();
+```
+
+## call、apply、bind三者的区别是什么？
+
+我们对于三者都进行举例运行了，我们开始做总结归纳，我们先找找三者的共同点是什么？
+
+共同点：
+
+1、都能改变this的指向，第一个传递的参数都是this指向的对象。
+
+2、三者都采用的后续传参的形式。
+
+不同点：
+
+1、call的传参是单个传参的， apply是以数组形式传参，否则会报错。
+而bind没有规定，传递单参数和数组都可以。
+
+2、call 和 apply函数的执行是直接执行的，而bind函数会返回一个函数，等到我们需要调用的时候才会执行。
+
+
+> 手写 call 、 bind、 apply函数
+
+```javascript
+Function.prototype.myCall = function (context) {
+    // 判断调用者是否为函数
+    if (typeof this !== 'function') {
+        throw new TypeError('Error');
+    }
+    // 不传参默认为 window
+    context = context || window;
+    // 新增 fn 属性， 将值设置为需要调用的函数
+    context.fn = this;
+    // 把 arguments 转化为数组并将call的传参提取出来
+    // call的第一项是obj，剩下的是参数
+    const args = Array.from(arguments).slice(1);
+    // 传参调用函数
+    const result = context.fn(...args);
+    // 删除函数
+    delete context.fn
+    // 返回执行结果
+    return result;
+}
+```
