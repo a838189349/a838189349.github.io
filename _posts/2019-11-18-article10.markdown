@@ -1,0 +1,67 @@
+---
+layout: post
+title: "实现一个自己的EventCenter函数"
+subtitle: ""
+date: 2019-11-18 18:55:05
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - javascript
+---
+
+## 直接上代码
+
+创建eventcenter.js文件
+
+```javascript
+const EventCenter = {
+    handlers: {},
+    on: function (key = '', action = () => {}) {
+        if (!this.handlers[key]) {
+            // 初次监听
+            this.handlers[key] = [action];
+        } else {
+            this.handlers[key] = [...this.handlers[key], action];
+        }
+    },
+    trigger: function (key = '', ...args) {
+        const _do = this.handlers[key] || [];
+
+        if (!_do || _do.length === 0) {
+            return;
+        }
+
+        for (let i = 0; i < _do.length; i++) {
+            _do[i].apply(this, args);
+        }
+    },
+    off: function (key = '') {
+        delete this.handlers[key];
+    }
+}
+
+export default { EventCenter }
+```
+
+调用方法
+
+```javascript
+public handleOn() {
+    _e.EventCenter.on('name', (data) => {
+        this.say(data)
+    })
+}
+
+public handleTrigger() {
+    _e.EventCenter.trigger('name', { name: 'lencent' })
+}
+
+public handleOff() {
+    _e.EventCenter.off('name');
+}
+
+public say(data) {
+    console.log(`my name is ${data.name || ''}`);
+}
+```
