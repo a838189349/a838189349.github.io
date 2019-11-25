@@ -46,6 +46,12 @@ export default { EventCenter }
 
 调用方法
 
+```html
+<div v-on:click='handleOn()'>on</div>
+<div v-on:click='handleTrigger()'>trigger</div>
+<div v-on:click='handleOff()'>off</div>
+```
+
 ```javascript
 public handleOn() {
     _e.EventCenter.on('name', (data) => {
