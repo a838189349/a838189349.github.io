@@ -1,0 +1,74 @@
+---
+layout: post
+title: "forEach到底会不会改变原数组？"
+subtitle: ""
+date: 2019-12-03 17:13:11
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - javascript
+---
+
+让我们先说说 map 和 forEach 的区别： map()返回一个新数组，原数组不会改变。而forEach()返回值是undefined，不可以链式调用。
+
+我一直以为forEach是会修改原数组的内容，然而在项目开发中却遇到了一些问题。
+
+以下是示例代码：
+
+```javascript
+let someObj = [
+    { key: '1', value: 'A' },
+    { key: '2', value: 'B' },
+    { key: '3', value: 'C' },
+];
+someObj.forEach(item => {
+    item = {
+        ...item,
+        value: 'changeValue',
+    }
+});
+console.log(someObj); // 输出原来的someObj
+```
+
+为什么结果和我们希望的不一致呢？我们换一种写法试试
+
+```javascript
+let someObj = [
+    { key: '1', value: 'A' },
+    { key: '2', value: 'B' },
+    { key: '3', value: 'C' },
+];
+someObj.forEach(item => {
+    item.value = 'changeValue';
+});
+console.log(someObj);  // 输出change后的someObj
+```
+
+粗暴的我得出了一个结论：当我主动去修改item的值时，forEach是不能做到修改原数组的，而当我修改一个引用类型的子值时，会改变原数组。
+
+很大一个可能就是数组中，引用类型结构的项存放在内存堆（hape）中，数组的索引操作符只是一个地址，真正的值存放在栈（stack）中，所以当我们直接修改 item ，也就是存放在堆的值时，是不会做出改动的，而修改栈中存放的值时，原数组跟随着一起变动。
+
+
+那我想要修改整个item值，应该怎么搞呢？
+
+只能是通过索引了
+
+```javascript
+let someObj = [
+    { key: '1', value: 'A' },
+    { key: '2', value: 'B' },
+    { key: '3', value: 'C' },
+];
+someObj.forEach((item, index) => {
+    someObj[index] = {
+        ...item,
+        value: {
+            '1': 'change1',
+            '3': 'change3',
+        }[item.key] || 'otherChange',
+    }
+});
+console.log(someObj); 
+// [{"key":"1","value":"change1"},{"key":"2","value":"otherChange"}{"key":"3","value":"change3"}]
+```

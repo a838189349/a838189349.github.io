@@ -1,0 +1,72 @@
+---
+layout: post
+title: "在taro中封装一个海报生成器"
+subtitle: ""
+date: 2019-11-25 18:37:11
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - javascript
+---
+
+在小程序开发过程中，经常会做的一个需求就是生成海报并且保存的功能。
+
+在APP中我们可以非常简单的生成一张海报，步骤如下：
+1、写好一个渲染好的静态页面。
+
+2、调用系统的截图方法。
+
+这样一张海报就保存在相册中了。
+
+但是小程序是没有提供方法调用系统截图的，那时候我们怎么做呢？ 不出意外大家都能想到 canvas。
+
+## 分析如何实现
+
+思考了一下从拿到一张海报UI图，到把真实数据渲染进去以及绘画出来所经过的步骤，可以细分为：文字、图片、线条、块状、圆角矩形。最终通过小程序提供的API把绘制好的canvas保存为一张图片。
+
+
+## 在小程序中我们生成海报存在的问题
+
+1、二维码是动态获取的
+
+2、绘制图片失败，跨域、getImageInfo失败的。
+
+3、高度的不确定性
+
+```javascript
+    /**
+     * 渲染一段文字
+     */
+    _drawSingleText({ x, y, fontSize, fillStyle, baseLine = 'top', textAlign = 'left', content, opacity = 1, textDecoration = 'none', 
+      width, lineNum = 1, lineHeight = 0, fontWeight = 'normal', fontStyle = 'normal', fontFamily = 'sans-serif' }) {
+
+          /**
+           * 字体大小(fontSize)如果是小数，那么canvas的font会有问题，渲染不出，会变得非常非常小， 这里加个Math.floor();
+           */
+
+          ctx.font = fontStyle + " " + fontWeight + " " + Math.floor(fontSize * ratioW / 2) + "px " + fontFamily;
+          ctx.setGlobalAlpha(opacity);
+          ctx.setFillStyle(fillStyle);
+          ctx.setTextBaseline(baseLine);
+          ctx.setTextAlign(textAlign);
+
+          // 传入了width， 渲染前先调用getMeasure
+          let textContent = typeof content == 'function' ? content() : content
+          if (width) {
+              for (let i = content.length; i > 0; i--) {
+                let ctxWidth = ctx.measureText(textContent).width;
+                if (ctxWidth > (width * ratioW / 2)) {
+                    // 不够位置渲染，长度减1
+                    textContent = textContent.substring(0, textContent.length - 1);
+                } else {
+                    // 足够了， 最后面增加...,  （好像没有加的必要？？直接截断）
+                    break;
+                }
+              }
+          }
+
+          ctx.fillText(textContent, x * ratioW / 2, y * ratioH / 2);
+
+    },
+```
