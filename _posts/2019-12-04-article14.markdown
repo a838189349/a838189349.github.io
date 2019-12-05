@@ -1,0 +1,37 @@
+---
+layout: post
+title: "lunix添加快捷命令"
+subtitle: ""
+date: 2019-12-04 10:15:50
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - lunix
+---
+
+例如我们需要跑 pm2 守护 nuxt 的 start命令时，每次重新打包后都得运行
+
+```javascript
+pm2 delete projectName
+```
+
+后，再执行
+
+```javascript
+pm2 start npm --name "projectName" -- run start
+```
+
+这样太麻烦了。
+
+我们可以vim ~/.bashrc，在里面添加
+
+alias xx_stop='pm2 delete xx'
+
+alias xx_start='pm2 start npm --name 'xx' -- run start'
+
+记得改完后执行 source ~/.bashrc
+
+之后我们打包好代码之后 直接执行 xx_stop xx_start 就可以更新了，
+
+其他的以此类推。
