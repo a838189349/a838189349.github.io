@@ -35,3 +35,10 @@ alias xx_start='pm2 start npm --name 'xx' -- run start'
 之后我们打包好代码之后 直接执行 xx_stop xx_start 就可以更新了，
 
 其他的以此类推。
+
+
+还遇到一个问题就是 git 每次提交都要输入账号密码
+
+执行一下这个命令：git config --global credential.helper store
+
+下次提交代码时再输入一次账号密码，以后就不用输了
