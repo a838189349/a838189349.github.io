@@ -7,7 +7,7 @@ author: "小小良"
 header-img: "img/bg/bg_article_1.jpg"
 catelog: true
 tags:
-    - lunix
+    - iosbug
 ---
 
 解决办法：
