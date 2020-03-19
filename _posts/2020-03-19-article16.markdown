@@ -1,0 +1,30 @@
+---
+layout: post
+title: "H5真机测试中，IOS系统contenteditable无法输入的解决办法"
+subtitle: ""
+date: 2020-03-19 18:36:00
+author: "小小良"
+header-img: "img/bg/bg_article_1.jpg"
+catelog: true
+tags:
+    - lunix
+---
+
+解决办法：
+
+```javascript
+<RichText
+    className='m-detail-textarea'
+    space='nbsp'
+    nodes={[{
+        name: 'div',
+        attrs: {
+            className: 'm-detail-textarea',
+            contenteditable: false,
+            innerHTML: item.content || '',
+            },
+        }]}
+    />
+```
+
+添加样式-webkit-user-select:text就可以解决了
